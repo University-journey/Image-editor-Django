@@ -1,0 +1,1 @@
+## Django and fastapi project
