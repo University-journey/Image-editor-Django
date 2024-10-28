@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}Image Detail{% endblock %}
+
+{% block content %}
+<a href="{% url 'image_list' %}">Powrót do listy</a>
+<h1>Szczegóły obrazka: {{ image.name }}</h1>
+<p>{{ image.description }}</p>
+<p>Data publikacji: {{ image.publication_date }}</p>
+<svg width="{{ image.width }}" height="{{ image.height }}" viewBox="0 0 {{ image.width }} {{ image.height }}" xmlns="http://www.w3.org/2000/svg">
+    {% for rect in rectangles %}
+    <rect x="{{ rect.x }}" y="{{ rect.y }}" width="{{ rect.width }}" height="{{ rect.height }}" fill="{{ rect.color }}"></rect>
+    {% endfor %}
+</svg>
+
+<!-- Displaying Rectangles -->
+<table class="table mt-4">
+    <thead>
+        <tr>
+            <th>X</th>
+            <th>Y</th>
+            <th>Width</th>
+            <th>Height</th>
+            <th>Color</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for rect in rectangles %}
+        <tr>
+            <td>{{ rect.x }}</td>
+            <td>{{ rect.y }}</td>
+            <td>{{ rect.width }}</td>
+            <td>{{ rect.height }}</td>
+            <td>{{ rect.color }}</td>
+            <td>
+                {% if can_edit %}
+                <form method="post" action="">
+                    {% csrf_token %}
+                    <input type="hidden" name="delete" value="{{ rect.id }}">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if can_delete %}
+<form method="post" class="mt-4">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" name="add" class="btn btn-primary">Dodaj prostokąt</button>
+</form>
+{% endif %}
+{% endblock %}
